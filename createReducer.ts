@@ -31,6 +31,11 @@ function createAction<T extends string, P>(type: T, payload?: P) {
     return payload === undefined ? { type } : { type, payload };
 }
 
+type State = Readonly<{
+    token?: string;
+    loading: boolean
+}>;
+
 function createReducer<P extends string, U extends string, T extends ActionsCreators<P, U>, State>(
     handlers: ActionHandlers<P, U, T, State>,
     initialState: State
@@ -48,31 +53,25 @@ function createReducer<P extends string, U extends string, T extends ActionsCrea
 
 
 const SET_TOKEN_TYPE = "setToken";
+const INVALIDATE_TOKEN = "setToken";
 
-const setTokenHandler: ActionHandlers<string, string, ActionsCreators<string, string>, State> = {
-    [SET_TOKEN_TYPE]: ({ loginError, ...state }, action) => ({
+const handlers: ActionHandlers<string, string, ActionsCreators<string, string>, State> = {
+    [SET_TOKEN_TYPE]: (state, action) => ({
         ...state,
         token: action.payload,
-        loading: true,
-        loginError: loginError
+        loading: true
+    }),
+    [INVALIDATE_TOKEN]: (state, action) => ({
+        ...state,
+        token: action.payload,
+        loading: false
+
     })
 }
-const Actions: ActionsCreators<string, string> = {
-    setToken: (token: string) => createAction(SET_TOKEN_TYPE, token)
-};
-
-
-type State = Readonly<{
-    token?: string;
-    loading: boolean;
-    loginError?: string;
-}>;
 
 const initialState: State = {
-    token: '',
-    loading: false,
-    loginError: ''
-
+    token: 'hello',
+    loading: true
 }
 
 const tokenAction: ActionWithPayload<string, string> = {
@@ -80,8 +79,8 @@ const tokenAction: ActionWithPayload<string, string> = {
     payload: 'blakesToken'
 }
 
-const reducer = createReducer(setTokenHandler, initialState)
-
+const reducer = createReducer(handlers, initialState)
+console.log(initialState)
 const state = reducer(initialState, tokenAction)
 
 console.log(state)
