@@ -9,8 +9,7 @@ const promiseAll = (promises) => {
                 if (promisCounter === promises.length) {
                     resolve(outputArray)
                 }
-            })
-                .catch(reject)
+            }).catch(reject)
         })
     })
 }
